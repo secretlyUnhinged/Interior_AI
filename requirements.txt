@@ -1,7 +1,7 @@
 torch==2.7.0
-streamlit==1.20.0
-faiss-cpu==1.7.4
-Pillow==8.2.0
+streamlit==1.19.0  # Or 1.20.0 if you prefer the latest
+faiss-cpu==1.7.3   # Or 1.7.4 if it works
+Pillow==8.3.2      # To avoid issues with building from source
 requests==2.26.0
 transformers==4.17.0
 git+https://github.com/openai/CLIP.git
