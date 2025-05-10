@@ -11,7 +11,7 @@ import zipfile
 import requests
 
 st.set_page_config(page_title="Interior AI Search", layout="wide")
-device = "cuda" if torch.cuda.is_available() else "cpu"
+device = "mps" if torch.backends.mps.is_available() else "cpu"
 model, preprocess = clip.load("ViT-L/14", device=device)
 
 
