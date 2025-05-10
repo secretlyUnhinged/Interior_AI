@@ -2,7 +2,6 @@ import os
 from PIL import Image
 import torch
 import clip
-import faiss
 import numpy as np
 import pickle
 import streamlit as st
@@ -10,6 +9,7 @@ from torchvision import models, transforms
 import zipfile
 import requests
 import gdown
+from scipy.spatial.distance import cosine
 
 st.set_page_config(page_title="Interior AI Search", layout="wide")
 device = "cpu"
@@ -56,12 +56,9 @@ def load_data():
     features = data["features"]
     paths = data["paths"]
 
-    index = faiss.IndexFlatIP(features.shape[1])
-    index.add(features)
+    return model, preprocess, features, paths
 
-    return model, preprocess, index, features, paths
-
-model, preprocess, index, features, image_paths = load_data()
+model, preprocess, features, image_paths = load_data()
 classifier = load_classifier()
 
 thumbnail_dir = "thumbnails"
@@ -101,8 +98,9 @@ def search_by_text(prompt, top_k=5):
         text_features /= text_features.norm(dim=-1, keepdim=True)
         text_features = text_features.cpu().numpy()
 
-    D, I = index.search(text_features, top_k)
-    return [image_paths[i] for i in I[0]]
+    similarities = np.array([1 - cosine(text_features, feature) for feature in features])
+    indices = np.argsort(similarities)[::-1][:top_k]
+    return [image_paths[i] for i in indices]
 
 def search_by_image(uploaded_file, top_k=5):
     image = Image.open(uploaded_file).convert("RGB")
@@ -113,8 +111,9 @@ def search_by_image(uploaded_file, top_k=5):
         image_features /= image_features.norm(dim=-1, keepdim=True)
         image_features = image_features.cpu().numpy()
 
-    D, I = index.search(image_features, top_k)
-    return [image_paths[i] for i in I[0]]
+    similarities = np.array([1 - cosine(image_features, feature) for feature in features])
+    indices = np.argsort(similarities)[::-1][:top_k]
+    return [image_paths[i] for i in indices]
 
 from transformers import BlipProcessor, BlipForConditionalGeneration
 @st.cache_resource
@@ -188,4 +187,4 @@ with tab2:
         show_image_grid(boosted_results)
 
 st.markdown("---")
-st.caption("Powered by OpenAI CLIP, FAISS, and Streamlit ❤️")
+st.caption("Powered by OpenAI CLIP and Streamlit ❤️")
