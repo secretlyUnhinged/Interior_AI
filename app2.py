@@ -3,7 +3,6 @@ from PIL import Image
 import torch
 import clip
 import numpy as np
-import faiss
 import pickle
 import streamlit as st
 from torchvision import models, transforms
