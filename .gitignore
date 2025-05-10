@@ -1,0 +1,6 @@
+*.pth
+*.zip
+thumbnails/
+__pycache__/
+*.pyc
+.DS_Store
