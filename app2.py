@@ -7,10 +7,30 @@ import faiss
 import pickle
 import streamlit as st
 from torchvision import models, transforms
+import zipfile
+import requests
 
 st.set_page_config(page_title="Interior AI Search", layout="wide")
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model, preprocess = clip.load("ViT-L/14", device=device)
+
+
+def download_and_extract_thumbnails():
+    url = "https://drive.google.com/uc?export=download&id=1ljPKI67c50gpu2X5NySQVqHqsxH9Pbjk"
+    zip_path = "thumbnails.zip"
+    if not os.path.exists("thumbnails"):
+        print("Downloading thumbnails.zip...")
+        r = requests.get(url, stream=True)
+        with open(zip_path, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                if chunk:
+                    f.write(chunk)
+        print("Extracting thumbnails...")
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall("thumbnails")
+        print("Thumbnails ready.")
+
+download_and_extract_thumbnails()
 
 # Load the ResNet-based style classifier
 @st.cache_resource
