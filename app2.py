@@ -9,11 +9,16 @@ import streamlit as st
 from torchvision import models, transforms
 import zipfile
 import requests
+import gdown
 
 st.set_page_config(page_title="Interior AI Search", layout="wide")
 device = "mps" if torch.backends.mps.is_available() else "cpu"
 model, preprocess = clip.load("ViT-L/14", device=device)
 
+def download_model_from_gdrive():
+    url = "https://drive.google.com/uc?export=download&id=1OvbfsDQhnxd72-CZUjIGcop7dJzBHWMu"
+    output = "style_classifier_stage3.pth"
+    gdown.download(url, output, quiet=False)
 
 def download_and_extract_thumbnails():
     url = "https://drive.google.com/uc?export=download&id=1ljPKI67c50gpu2X5NySQVqHqsxH9Pbjk"
@@ -35,6 +40,8 @@ download_and_extract_thumbnails()
 # Load the ResNet-based style classifier
 @st.cache_resource
 def load_classifier():
+    if not os.path.exists("style_classifier_stage3.pth"):
+        download_model_from_gdrive()
     model_resnet = models.resnet50(pretrained=False)
     model_resnet.fc = torch.nn.Linear(model_resnet.fc.in_features, 19)
     model_resnet.load_state_dict(torch.load("style_classifier_stage3.pth", map_location=device))
