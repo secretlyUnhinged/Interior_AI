@@ -12,7 +12,7 @@ import requests
 import gdown
 
 st.set_page_config(page_title="Interior AI Search", layout="wide")
-device = "gpu" if torch.backends.mps.is_available() else "cpu"
+device = "cpu"
 model, preprocess = clip.load("ViT-L/14", device=device)
 
 def download_model_from_gdrive():
