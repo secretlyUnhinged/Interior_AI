@@ -2,6 +2,7 @@ import os
 from PIL import Image
 import torch
 import clip
+import faiss
 import numpy as np
 import pickle
 import streamlit as st
@@ -11,7 +12,7 @@ import requests
 import gdown
 
 st.set_page_config(page_title="Interior AI Search", layout="wide")
-device = "mps" if torch.backends.mps.is_available() else "cpu"
+device = "gpu" if torch.backends.mps.is_available() else "cpu"
 model, preprocess = clip.load("ViT-L/14", device=device)
 
 def download_model_from_gdrive():
