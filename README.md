@@ -104,7 +104,3 @@ Contributions are welcome! If you have suggestions or improvements, feel free to
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-```
-
-Just copy this entire block of text and paste it directly into your `README.md` file on GitHub. Make sure to replace `YOUR_GOOGLE_DRIVE_FILE_ID` with the actual file ID for the thumbnails zip hosted on your Google Drive.
-```
